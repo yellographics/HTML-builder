@@ -16,7 +16,7 @@ fs.readdir(path.join(__dirname, 'secret-folder'),
             const pathToCheck = path.join(__dirname, 'secret-folder', file.name);
             fs.stat(pathToCheck, (err, stats) => {
               if(!err){
-                console.log(filename[0] + " - " + ext + ' - ' + stats.size);
+                console.log(filename[0] + " - " + ext + ' - ' + stats.size +' bites');
               }           
             })            
           }        
