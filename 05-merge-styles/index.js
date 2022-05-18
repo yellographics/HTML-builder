@@ -14,8 +14,7 @@ fs.readdir(
     else {
       files.forEach((file) => {
         if (file.name.endsWith(".css")) {
-          const src = path.join(__dirname, "styles", file.name);
-          const output = path.join(__dirname, "project-dist", "bundle.css");
+          const src = path.join(__dirname, "styles", file.name);          
           fs.readFile(src, "utf-8", (err, data) => {
             if (err) throw err;
             else writeableStream.write(data);

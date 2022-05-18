@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const fsPromises = fs.promises;
 
 function copyDir() {
   fs.mkdir(
