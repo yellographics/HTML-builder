@@ -20,5 +20,5 @@ process.on('SIGINT', () => {
 })
 
 process.on('exit', () => {
-    stdout.write('Finished!');    
+    stdout.write('See you next time!');    
 })

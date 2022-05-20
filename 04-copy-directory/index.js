@@ -1,48 +1,32 @@
-const fs = require("fs");
+const { mkdir, readdir, copyFile, rm, stat } = require("fs/promises");
 const path = require("path");
 
-function copyDir() {
-  fs.mkdir(
-    path.resolve(__dirname, "files-copy"),
-    { recursive: true },
-    (err) => {
-      if (err) throw err;
-    }
-  );
+const input = path.join(__dirname, "files");
+const output = path.join(__dirname, "files-copy");
 
-  fs.readdir(
-    path.join(__dirname, "files-copy"),
-    { withFileTypes: true },
-    (err, files) => {
-      if (err) console.log(err);
-      else {
-        files.forEach((file) => {
-          const currentPath = path.join(__dirname, "files-copy", file.name);
-          fs.unlink(currentPath, (err) => {
-            if (err) throw err;
-          });
-        });
-      }
-    }
-  );
+async function copyDir(i, o){ 
+  
+  try {
+    await rm(o, {recursive: true});  
+  } catch (err) {}
 
-  fs.readdir(
-    path.join(__dirname, "files"),
-    { withFileTypes: true },
-    (err, files) => {
-      console.log("\nCopying...");
-      if (err) console.log(err);
-      else {
-        files.forEach((file) => {
-          const src = path.join(__dirname, "files", file.name);
-          const dest = path.join(__dirname, "files-copy", file.name);
-          fs.copyFile(src, dest, () => {
-            console.log(file.name + " is successfully copied");
-          });
-        });
+  try {    
+    await mkdir(o, {recursive: true });    
+  } catch (err) { console.log(err) }    
+
+  try {
+    const elements = await readdir(i, { withFileTypes: true });
+    elements.forEach((element) => {
+      if(element.isFile()){
+        copyFile(path.join(i, element.name), path.join(o, element.name));
+      } else {
+        const newInput = path.join(input, element.name);
+        const newOutput = path.join(output, element.name);
+        copyDir(newInput, newOutput);
       }
-    }
-  );
+    })
+  } catch (err) { console.log(err) }
 }
 
-copyDir();
+copyDir(input, output);
+

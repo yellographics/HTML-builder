@@ -1,26 +1,27 @@
 const path = require("path");
 const fs = require("fs");
+const { readdir, readFile } = require('fs/promises');
 
-let writeableStream = fs.createWriteStream(
+const writeableStreamCss = fs.createWriteStream(
   path.join(__dirname, "project-dist", "bundle.css")
 );
 
-fs.readdir(
-  path.join(__dirname, "styles"),
-  { withFileTypes: true },
-  (err, files) => {
-    console.log("\nAnalazing files...");
-    if (err) console.log(err);
-    else {
-      files.forEach((file) => {
-        if (file.name.endsWith(".css")) {
-          const src = path.join(__dirname, "styles", file.name);          
-          fs.readFile(src, "utf-8", (err, data) => {
-            if (err) throw err;
-            else writeableStream.write(data);
-          });
-        }
-      });
-    }
-  }
-);
+const inputPath = path.join(__dirname, "styles");
+
+
+async function bundleCss(){
+    try {
+    const files = await readdir(inputPath, {withFileTypes: true});   
+    for (const file of files)  {
+      if (file.name.endsWith('.css')){
+        try{
+          const cssData = await readFile(path.join(inputPath, file.name));
+          writeableStreamCss.write(cssData);
+        } catch (err){}        
+      }
+    }      
+  } catch (err) {console.log(err)}
+}
+
+bundleCss();
+
